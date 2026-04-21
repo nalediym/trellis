@@ -1,143 +1,140 @@
 # Deploying Trellis to Firebase App Hosting
 
-One-time setup takes ~10 min. Every deploy after that is automatic — `git push origin main` triggers a fresh build. Estimated total cost: **$0/month** (Firebase App Hosting free tier on Blaze billing + AI Studio free tier).
+Almost everything is declared in files. The only genuinely interactive step is the first-time GitHub OAuth (Firebase's app has to be granted access to your repo from a browser). Estimated cost at demo scale: **$0/month** (Firebase free tier on Blaze billing + AI Studio free tier).
 
-## State at the start of this walkthrough
+## State before you start
 
-- `~/Projects/trellis/` — standalone repo at this path
-- `nalediym/trellis` — public GitHub repo, branch `main`
-- `trellis-nalediym` — dedicated GCP project, billing linked, all required APIs enabled (Firebase, App Hosting, Cloud Build, Run, Artifact Registry, Secret Manager, Gemini, IAM Credentials)
+- `~/Projects/trellis/` — repo root
+- `github.com/nalediym/trellis` — public GitHub repo, `main` branch
+- `trellis-nalediym` — dedicated GCP project, billing linked, all APIs enabled
 
-## One-time setup
+## Config files — the declarative part
 
-### 1. Firebase CLI is installed
+| File | What it pins |
+|---|---|
+| `.firebaserc` | The Firebase project ID (`trellis-nalediym`) — no "which project?" prompt |
+| `firebase.json` | Backend name (`trellis`), root dir (`/`), ignore list |
+| `apphosting.yaml` | Runtime config: scale-to-zero, 512 MiB, 120s timeout, secret-backed env |
+| `scripts/deploy.sh` | Non-interactive driver for `firebase apphosting:backends:create` + secret creation |
 
-Already done. Verify:
+All committed. Nothing to re-enter every deploy.
 
-```bash
-firebase --version
-```
+## One-time setup (~6 min)
 
-### 2. Log into Firebase
+### 1. Log into Firebase
 
 ```bash
 firebase login
 ```
 
-Opens a browser. Pick `nalediymkekana@gmail.com` — the same account that owns the GCP project.
+Browser opens. Pick `nalediymkekana@gmail.com`.
 
-### 3. Promote the GCP project to a Firebase project
+### 2. Promote the GCP project to a Firebase project
 
-Open: <https://console.firebase.google.com/>
-- Click **Add project**
-- Select **Add Firebase to an existing Google Cloud project**
-- Pick `trellis-nalediym`
-- Skip Google Analytics (not needed for this demo)
-- Click **Add Firebase**
+<https://console.firebase.google.com/> → **Add project** → **Add Firebase to an existing Google Cloud project** → pick `trellis-nalediym` → skip analytics → done.
 
-Takes ~30 seconds.
+~30 seconds.
 
-### 4. Link this repo to Firebase App Hosting
+### 3. Grab a free Gemini key
+
+<https://aistudio.google.com/app/apikey> → **Create API key** → pick `trellis-nalediym` → copy the `AIza...` string.
+
+### 4. Run the deploy script
 
 ```bash
 cd ~/Projects/trellis
-
-firebase init apphosting
+export GEMINI_API_KEY='AIza...your-key...'
+bash scripts/deploy.sh
 ```
 
-Answers to the prompts:
-- **Project**: `trellis-nalediym`
-- **Backend name**: `trellis`
-- **Region**: `us-central1` (cheapest + lowest-latency for NYC)
-- **GitHub repo**: `nalediym/trellis`
-- **Branch**: `main`
-- **Root dir**: `/` (the Next.js app is at the repo root)
+The script:
+- Verifies you're logged in and the project is visible
+- Creates the App Hosting backend `trellis` in `us-central1` (non-interactive; reads `firebase.json` for the name + root dir)
+- Stores your Gemini key in Secret Manager as `GOOGLE_GENERATIVE_AI_API_KEY`
+- Grants the backend access to that secret
 
-The CLI opens a browser to authorize Firebase's GitHub app against your `nalediym/trellis` repo. Grant it.
+Output ends with a link to the Firebase console where you'll do the last manual step.
 
-### 5. Set the Gemini API key as a secret
+### 5. Link the GitHub repo (the one interactive step)
 
-Get a free key from <https://aistudio.google.com/app/apikey> — pick the `trellis-nalediym` project when prompted.
-
-```bash
-firebase apphosting:secrets:set GOOGLE_GENERATIVE_AI_API_KEY
-# Paste the AIza... key when prompted.
-# Say "yes" when it asks to grant the App Hosting backend access.
-```
-
-Stored encrypted in Google Secret Manager, never committed to git.
-
-### 6. First deploy
-
-The `firebase init apphosting` step in 4 usually kicks off the first rollout automatically. If not:
-
-```bash
-firebase apphosting:backends:list                  # confirm `trellis` is there
-firebase apphosting:rollouts:create trellis        # trigger a manual rollout
-```
-
-Watch the build:
-
-```bash
-firebase apphosting:builds:list --backend trellis
-```
-
-In ~3–5 min you'll have a live URL like `https://trellis--trellis-nalediym.us-central1.hosted.app`. The Firebase console shows it too:
+Open the link the script printed:
 
 <https://console.firebase.google.com/project/trellis-nalediym/apphosting>
 
-## After first deploy
+- Click your `trellis` backend
+- Click **Connect a GitHub repository**
+- Authorize Firebase's GitHub app if it hasn't been (this is the OAuth dance)
+- Pick `nalediym/trellis`, branch `main`, root `/`
+- Hit **Save**
 
-- Every `git push origin main` auto-deploys.
-- Preview URLs for other branches can be enabled via the console.
-- Drop the live URL into:
-  - `README.md` line 5 (the `<your-firebase-url>` placeholder)
-  - Your resume's Selected AI Projects section
-  - Your cover letter's demo paragraph
+This step exists because Firebase needs the user's GitHub permission to install its webhook — no CLI way around it. Do it once, and every subsequent `git push origin main` auto-deploys.
 
-## Monitoring + logs
+### 6. Trigger the first rollout
+
+The link step above usually kicks off the first build automatically. If not:
 
 ```bash
-firebase apphosting:logs --backend trellis         # tail logs
-firebase apphosting:builds:get <build-id>          # inspect a specific build
+firebase apphosting:rollouts:create trellis --project=trellis-nalediym
+```
+
+## Ongoing deploys
+
+```bash
+git push origin main
+```
+
+That's it. App Hosting sees the push, rebuilds, rolls out. Takes ~3–5 min per deploy.
+
+Watch builds:
+
+```bash
+firebase apphosting:builds:list --project=trellis-nalediym --backend=trellis
+firebase apphosting:logs --project=trellis-nalediym --backend=trellis
 ```
 
 Or in the browser: <https://console.firebase.google.com/project/trellis-nalediym/apphosting>.
 
+## After first deploy — update your portfolio
+
+Once the live URL is printed (something like `https://trellis--trellis-nalediym.us-central1.hosted.app`), paste it into:
+
+- `README.md` line 5 (replaces `<your-firebase-url>`)
+- Your resume's Selected AI Projects section (it can replace or complement `linux-jr`)
+- Your cover letter's demo paragraph
+
 ## Rollback
 
 ```bash
-firebase apphosting:rollouts:rollback --backend trellis
+firebase apphosting:rollouts:rollback --project=trellis-nalediym --backend=trellis
 ```
-
-Rolls back to the previous successful deploy.
 
 ## Cost
 
-- **Firebase App Hosting**: requires Blaze (pay-as-you-go) billing plan, but the free tier covers 2M requests/month; scales to zero when idle.
-- **Cloud Run (underlying)**: 2M requests/month free, 360K vCPU-seconds/month free.
-- **Cloud Build**: 120 build-minutes/day free (each Trellis build is ~3 min).
-- **Artifact Registry**: 0.5 GB free storage.
-- **Secret Manager**: 6 active secret versions free, 10K access operations/month free.
-- **Gemini API (AI Studio)**: 1,500 requests/day free on Flash, plenty for demo.
+| Component | Free tier / realistic cost |
+|---|---|
+| App Hosting | 2M requests/month free, scales to zero |
+| Cloud Run (underlying) | 2M requests/month free, 360K vCPU-seconds/month free |
+| Cloud Build | 120 build-minutes/day free (each Trellis build ~3 min) |
+| Artifact Registry | 0.5 GB storage free |
+| Secret Manager | 6 active secret versions free, 10K access ops/month free |
+| Gemini API (AI Studio) | 1,500 requests/day on Flash, plenty for demo |
+| **Total at demo scale** | **$0/month** |
 
-**Expected monthly cost at demo scale: $0.** Even 100K requests/month would be under $5.
-
-If traffic goes wild: you'll get a GCP budget alert. Set one explicitly at <https://console.cloud.google.com/billing/budgets?project=trellis-nalediym>.
+Set a budget alert at <https://console.cloud.google.com/billing/budgets?project=trellis-nalediym> if you want insurance against surprises.
 
 ## Troubleshooting
 
+**`scripts/deploy.sh` says "firebase can't see project"**
+- Step 1 (`firebase login`) or step 2 (promote to Firebase project) hasn't been done. Run those.
+
 **Build fails on "cannot find module '@ai-sdk/google'"**
-- Cause: `npm install` didn't run. Fix: Firebase App Hosting runs `npm ci` automatically, but `package-lock.json` must be committed. Check the lockfile is in git.
+- `package-lock.json` isn't committed. Fix: `git add package-lock.json && git commit && git push`.
 
 **Build fails on "GOOGLE_GENERATIVE_AI_API_KEY is not defined"**
-- Cause: the secret wasn't created or wasn't granted to the backend. Re-run step 5.
+- The secret wasn't created or wasn't granted to the backend. Re-run `deploy.sh` with `GEMINI_API_KEY` set.
 
 **`npm run validate:manifests` fails in the build step**
-- Cause: a YAML file broke validation. Fix locally, commit, push. The prebuild gate is intentional — bad manifests can't deploy.
-
-**CORS errors from the browser**
-- App Hosting serves the whole app from one origin, so CORS shouldn't fire. If you see it, check that you haven't accidentally pointed a client-side fetch at a different host.
+- A YAML file broke validation. Fix locally, push. The prebuild gate is intentional — bad manifests can't deploy.
 
 **"Requires Blaze billing plan"**
-- The billing account is already linked to `trellis-nalediym` (confirmed by `gcloud billing projects describe trellis-nalediym`). If Firebase still complains, re-link it in the console: <https://console.firebase.google.com/project/trellis-nalediym/usage/details>.
+- Billing is already linked to `trellis-nalediym` (confirmed during project setup). If it still complains, re-link in the console: <https://console.firebase.google.com/project/trellis-nalediym/usage/details>.

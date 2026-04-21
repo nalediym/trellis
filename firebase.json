@@ -1,0 +1,14 @@
+{
+  "apphosting": {
+    "backendId": "trellis",
+    "rootDir": "/",
+    "ignore": [
+      "node_modules",
+      ".git",
+      ".next",
+      "*.log",
+      ".env.local",
+      ".trellis-audit.jsonl"
+    ]
+  }
+}
