@@ -1,8 +1,10 @@
 # Trellis
 
+[![CI](https://github.com/nalediym/trellis/actions/workflows/ci.yml/badge.svg)](https://github.com/nalediym/trellis/actions/workflows/ci.yml)
+
 *An AI platform for mission-driven education orgs — declaratively configured, DLP-aware, audited by design.*
 
-> **Status:** MVP shipped on branch `platform`, deployed to Firebase App Hosting (see [DEPLOY.md](./DEPLOY.md)). Control plane (5 skills, 4 personas, 3 DLP rules, 3 connectors), runtime (policy + DLP + audit), and UI (catalog, runner, manifest viewer, audit, connectors) all live. Every skill has a working runtime that falls back to a deterministic stub when `GOOGLE_GENERATIVE_AI_API_KEY` is unset. See [PLATFORM.md](./PLATFORM.md) for the vision, [BUILD-CHECKLIST.md](./BUILD-CHECKLIST.md) for what's in scope.
+> **Status:** MVP on `main`, deployable to Firebase App Hosting (see [DEPLOY.md](./DEPLOY.md)). Control plane (5 skills, 4 personas, 3 DLP rules, 3 connectors), runtime (policy + DLP + audit), and UI (catalog, runner, manifest viewer, audit, connectors) all live. Every skill has a working runtime that falls back to a deterministic stub when `GOOGLE_GENERATIVE_AI_API_KEY` is unset. CI runs lint + typecheck + manifest validation + engine tests + build on every push. See [PLATFORM.md](./PLATFORM.md) for the vision, [BUILD-CHECKLIST.md](./BUILD-CHECKLIST.md) for what's in scope.
 
 ## The point
 

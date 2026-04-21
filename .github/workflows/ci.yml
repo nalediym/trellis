@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# One CI pipeline per branch — cancel in-flight runs when a new push arrives.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: lint · typecheck · validate · test · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Validate platform manifests
+        run: npm run validate:manifests
+
+      - name: Run engine smoke tests
+        run: npm run test:engines
+
+      - name: Build
+        # `npm run build` re-runs validate:manifests as a prebuild step — keep
+        # the explicit step above anyway so a bad manifest shows up early
+        # in the CI log without the Next.js compile noise.
+        run: npm run build
