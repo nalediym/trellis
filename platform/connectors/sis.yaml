@@ -1,0 +1,33 @@
+id: sis
+name: "Student Information System"
+owner: naledi
+reviewers: [security-officer, data-lead]
+version: "0.1"
+kind: internal-api
+description: >
+  Reads student records from the SIS. MOCKED in the current deployment.
+  Production would hit a dbt-materialized read replica via a scoped
+  service account. Writes are never allowed from this platform.
+
+status: mocked
+
+read_only: true
+scopes_allowed:
+  - students.first_name
+  - students.grade
+  - students.homeroom
+  - attendance.last_30_days
+  - guardians.preferred_name
+  - guardians.preferred_language
+
+scopes_forbidden:
+  - students.last_name            # use first_name only in generated content
+  - students.ssn
+  - students.address
+  - students.medical
+  - students.counselor_notes
+  - students.iep_504_details
+
+cache_policy:
+  max_age_minutes: 15
+  evict_on_role_change: true

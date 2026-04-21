@@ -1,0 +1,13 @@
+id: teacher
+name: "Teacher"
+description: >
+  Classroom teacher at one school. Writes to guardians, pulls from the
+  handbook, drafts lesson-plan materials. Never sees data from schools
+  outside their own.
+
+role: teacher
+attributes:
+  school_id: middle-school-brooklyn-7
+  grade_levels: ["6", "7", "8"]
+  data_classifications_allowed: [public, internal, student-first-name]
+  data_classifications_forbidden: [student-ssn, medical, disciplinary-history]

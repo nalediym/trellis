@@ -1,0 +1,74 @@
+# Skill manifest schema — the source of truth for what a skill is.
+# Every file under platform/skills/*.yaml is validated against this at load time.
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "trellis/skill"
+title: Skill
+description: A single AI capability in the Trellis catalog.
+type: object
+required: [id, name, owner, version, kind, description]
+additionalProperties: false
+properties:
+  id:
+    type: string
+    pattern: "^[a-z0-9-]+$"
+    description: Stable, URL-safe identifier. Used in routes and policy bindings.
+  name:
+    type: string
+    description: Human-friendly display name shown in the catalog.
+  owner:
+    type: string
+    description: Person accountable for this skill's quality.
+  reviewers:
+    type: array
+    items: { type: string }
+    description: Who reviews a PR that changes this skill.
+  version: { type: string }
+  kind:
+    enum: [streaming-agent, one-shot, classifier, tool]
+    description: Runtime shape. streaming-agent = LLM with retrieval + redaction; one-shot = single LLM call; classifier = structured output; tool = calls a connector API.
+  description: { type: string }
+  tags: { type: array, items: { type: string } }
+  inputs:
+    type: array
+    items:
+      type: object
+      required: [id, label, type]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        type: { enum: [string, number, enum, boolean, email, date] }
+        required: { type: boolean, default: true }
+        options: { type: array, items: { type: string } }   # for enum
+        placeholder: { type: string }
+        example: {}   # any
+  outputs:
+    type: array
+    items:
+      type: object
+      required: [id, kind]
+      properties:
+        id: { type: string }
+        kind: { enum: [text, json, markdown, citations, classifier-label] }
+  connectors:
+    type: array
+    items: { type: string }
+    description: IDs of connectors this skill needs (e.g. drive, gmail, sis).
+  models:
+    type: object
+    properties:
+      draft:      { type: string, description: "e.g. google/gemini-2.5-pro" }
+      classifier: { type: string, description: "e.g. google/gemini-2.5-flash" }
+  dlp_rules:
+    type: array
+    items: { type: string }
+    description: IDs of DLP rules that MUST run on this skill's outputs.
+  disallowed_phrasings:
+    type: array
+    items: { type: string }
+  prompt_blueprint:
+    type: string
+    description: Path (relative to this manifest) to the .md file with the system prompt + few-shot examples.
+  blueprint_inputs_ref:
+    type: string
+    description: Optional — path to a blueprint that owns the inputs schema; this skill reuses it.

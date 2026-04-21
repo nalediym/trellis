@@ -1,0 +1,12 @@
+id: ops-analyst
+name: "Operations Analyst (home office)"
+description: >
+  Home-office operations analyst. Triages tickets, produces reports,
+  helps roll out tools across schools. Works in aggregates, never in
+  individual student records.
+
+role: ops
+attributes:
+  school_id: home-office
+  data_classifications_allowed: [public, internal, aggregated-stats]
+  data_classifications_forbidden: [student-first-name, medical, counselor-notes, disciplinary-history]

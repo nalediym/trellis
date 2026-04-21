@@ -1,0 +1,39 @@
+id: parent-contact-translate
+name: "Translate a parent message"
+owner: naledi
+reviewers: [translation-review-committee]
+version: "0.1"
+kind: one-shot
+description: >
+  Translates a draft parent message into one of Uncommon's supported
+  guardian languages. Output is always reviewed by a human fluent
+  in the target language before delivery.
+
+tags: [k-12, parent-comms, language-access]
+
+inputs:
+  - id: source_text
+    label: Message in English
+    type: string
+    example: "Hi Ms. Moreno — I wanted to check in about Amelie's attendance."
+  - id: target_language
+    label: Target language
+    type: enum
+    options: [es, pt, ht, zh, ar]
+    example: es
+  - id: formality
+    label: Tone
+    type: enum
+    options: [formal, warm-but-professional, casual]
+    example: warm-but-professional
+
+outputs:
+  - id: translation
+    kind: text
+  - id: review_required
+    kind: classifier-label
+
+models:
+  draft: "google/gemini-2.5-pro"
+
+dlp_rules: [pii-core]

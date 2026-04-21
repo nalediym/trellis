@@ -1,0 +1,40 @@
+id: lesson-plan-qa
+name: "Ask the teacher handbook"
+owner: naledi
+reviewers: [teacher-coach-1]
+version: "0.1"
+kind: streaming-agent
+description: >
+  Answers a teacher's lesson-plan or policy question, grounded only in
+  the handbook. Returns a 2-sentence answer plus the handbook citations
+  it relied on. Refuses to answer anything the handbook doesn't cover.
+
+tags: [k-12, reference, teacher-support]
+
+inputs:
+  - id: question
+    label: What do you want to ask the handbook?
+    type: string
+    placeholder: "How many unexplained absences trigger a guardian call?"
+    example: "How many unexplained absences trigger a guardian call?"
+  - id: grade_level
+    label: Grade level (optional)
+    type: string
+    required: false
+    placeholder: "7"
+
+outputs:
+  - id: answer
+    kind: markdown
+  - id: citations
+    kind: citations
+
+connectors:
+  - handbook
+
+models:
+  draft: "google/gemini-2.5-flash"   # flash — cheap, fast, grounded QA
+
+dlp_rules: [pii-core]
+
+prompt_blueprint: ../../blueprints/lesson-plan-qa.md

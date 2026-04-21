@@ -1,0 +1,45 @@
+# Role → skill bindings. Who is allowed to invoke what.
+# Missing bindings = denied. The default is closed.
+
+bindings:
+  - role: teacher
+    skills:
+      - parent-comms-attendance
+      - lesson-plan-qa
+      - policy-handbook-summary
+      - parent-contact-translate
+    rate_limit:
+      per_user_per_day: 50
+    reason: >
+      Core teacher workflows. Attendance drafts, handbook lookups,
+      parent-message translation, policy summaries for send-home materials.
+
+  - role: principal
+    skills:
+      - parent-comms-attendance
+      - lesson-plan-qa
+      - policy-handbook-summary
+      - parent-contact-translate
+      - ops-ticket-triage
+    rate_limit:
+      per_user_per_day: 100
+    reason: >
+      Same as teachers plus ops-triage for escalated issues.
+
+  - role: ops
+    skills:
+      - ops-ticket-triage
+      - policy-handbook-summary
+    rate_limit:
+      per_user_per_day: 200
+    reason: >
+      Triage-heavy. No parent-facing skills because ops doesn't
+      represent a specific school or teacher voice.
+
+  - role: admin
+    skills: "*"                 # all
+    rate_limit:
+      per_user_per_day: 1000
+    reason: >
+      Admins can invoke any skill for diagnostics + onboarding.
+      Still subject to DLP; still logged.

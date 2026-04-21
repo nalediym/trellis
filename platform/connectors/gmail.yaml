@@ -1,0 +1,24 @@
+id: gmail
+name: "Gmail (guardian delivery)"
+owner: naledi
+reviewers: [security-officer]
+version: "0.1"
+kind: oauth2
+description: >
+  Sends drafted parent communications through Gmail on behalf of the
+  invoking teacher. MOCKED in the current deployment — the UI shows
+  the draft but doesn't actually send. Real OAuth scopes listed below
+  for when this is turned on.
+
+status: mocked
+
+production_scopes:
+  - https://www.googleapis.com/auth/gmail.compose
+  - https://www.googleapis.com/auth/gmail.send
+
+rate_limit:
+  per_user_per_day: 250
+
+notes: >
+  Delivery requires a separate human-review gate before send. The agent
+  never calls gmail.send without a teacher clicking a Send button.

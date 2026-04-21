@@ -1,0 +1,35 @@
+id: pii-core
+name: "Core PII rules (regex layer)"
+owner: naledi
+reviewers: [security-officer, legal-liaison]
+version: "0.3"
+description: >
+  Deterministic regex patterns for unambiguous PII. Fast. Zero false
+  positives by design — if the pattern matches, it's almost certainly
+  the thing. Runs BEFORE the model sees input, and BEFORE any output
+  is returned to the caller.
+
+classifications:
+  block:        # these fire a hard-block. The request is refused.
+    - id: ssn
+      pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b"
+      label: "Social Security Number"
+    - id: credit_card
+      pattern: "\\b(?:\\d[ -]*?){13,19}\\b"
+      label: "Credit Card"
+    - id: medical_record_number
+      pattern: "\\bMRN[-:\\s]?\\d{5,10}\\b"
+      label: "Medical Record Number"
+
+  warn:         # these fire a yellow banner; request proceeds with redaction.
+    - id: email
+      pattern: "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+      label: "Email address"
+    - id: phone
+      pattern: "(?<!\\d)(\\+?1[-.\\s]?)?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}(?!\\d)"
+      label: "Phone number"
+    - id: street_address
+      pattern: "\\b\\d{1,5}\\s+[A-Z][a-z]+(?:\\s+[A-Z][a-z]+)*\\s+(?:St|Street|Ave|Avenue|Rd|Road|Blvd|Boulevard|Way|Drive|Dr|Lane|Ln|Place|Pl)\\b"
+      label: "Street address"
+
+redact_with: "[{label}]"

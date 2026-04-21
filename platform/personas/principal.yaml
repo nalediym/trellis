@@ -1,0 +1,13 @@
+id: principal
+name: "Principal"
+description: >
+  School leader. Drafts school-wide communications, pulls operational
+  reports. Has access to aggregated student data but not medical or
+  counselor notes.
+
+role: principal
+attributes:
+  school_id: middle-school-brooklyn-7
+  grade_levels: ["6", "7", "8"]
+  data_classifications_allowed: [public, internal, student-first-name, aggregated-stats]
+  data_classifications_forbidden: [medical, counselor-notes]

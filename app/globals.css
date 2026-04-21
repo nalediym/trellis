@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  /* Warm terracotta accent — grown-up, K-12-friendly, not corporate blue. */
+  --color-accent-50: oklch(0.97 0.02 40);
+  --color-accent-100: oklch(0.93 0.05 38);
+  --color-accent-200: oklch(0.87 0.09 36);
+  --color-accent-300: oklch(0.78 0.14 34);
+  --color-accent-400: oklch(0.68 0.17 32);
+  --color-accent-500: oklch(0.58 0.18 30);
+  --color-accent-600: oklch(0.49 0.17 28);
+  --color-accent-700: oklch(0.40 0.14 26);
+  --color-accent-800: oklch(0.32 0.11 24);
+  --color-accent-900: oklch(0.25 0.08 22);
+
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+:root {
+  --bg: oklch(0.99 0.003 80);
+  --surface: oklch(1 0 0);
+  --border: oklch(0.92 0.005 80);
+  --text: oklch(0.22 0.01 80);
+  --text-muted: oklch(0.52 0.01 80);
+  --accent: oklch(0.58 0.18 30);
+  --accent-soft: oklch(0.95 0.04 40);
+  --focus: oklch(0.58 0.18 30);
+}
+
+html,
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.muted {
+  color: var(--text-muted);
+}

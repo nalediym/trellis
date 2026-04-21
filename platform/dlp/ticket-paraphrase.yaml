@@ -1,0 +1,19 @@
+id: ticket-paraphrase
+name: "Paraphrase guard for ticket triage"
+owner: naledi
+reviewers: [security-officer, ops-lead]
+version: "0.1"
+description: >
+  Ticket triage outputs a rationale. That rationale must NOT echo
+  the ticket body back verbatim — that defeats the point of keeping
+  user-submitted text inside the trust boundary. This rule compares
+  output-rationale against input-body with a shingling similarity
+  check; anything above the threshold is redacted to
+  "[paraphrase from ticket body]".
+
+mode: similarity
+similarity_threshold: 0.7
+compare_output_field: rationale
+to_input_field: ticket_body
+on_finding: redact
+replacement: "[paraphrase from ticket body]"

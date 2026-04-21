@@ -1,0 +1,36 @@
+# Firebase App Hosting config.
+# Firebase App Hosting natively builds + runs Next.js 16 App Router apps —
+# no Dockerfile, no manual container work.
+#
+# This file is read by `firebase apphosting:backends:create` and on every
+# subsequent deploy triggered by a push to the connected GitHub branch.
+# See https://firebase.google.com/docs/app-hosting/configure
+
+runConfig:
+  # Scale to zero when idle; spin up on request.
+  minInstances: 0
+  maxInstances: 2
+  # Memory budget for the Next.js server process.
+  memoryMiB: 512
+  cpu: 1
+  concurrency: 80
+  # Request timeout (seconds). LLM streams usually finish well under this,
+  # but give them room.
+  timeoutSeconds: 120
+
+env:
+  # Secrets live in Google Secret Manager and are injected at runtime.
+  # Create the secret once with:
+  #   firebase apphosting:secrets:set GOOGLE_GENERATIVE_AI_API_KEY
+  # (the CLI prompts for the value and stores it encrypted)
+  - variable: GOOGLE_GENERATIVE_AI_API_KEY
+    secret: GOOGLE_GENERATIVE_AI_API_KEY
+    availability:
+      - RUNTIME
+
+  # Non-secret env. Put non-sensitive config here.
+  - variable: NEXT_PUBLIC_APP_NAME
+    value: "Trellis"
+    availability:
+      - BUILD
+      - RUNTIME

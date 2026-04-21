@@ -1,0 +1,13 @@
+id: admin
+name: "Data & IT Admin"
+description: >
+  Platform administrator. Sees audit logs, configures connectors,
+  reviews DLP rule proposals. The only persona with write access to
+  the IaC manifests themselves (via PR + code review).
+
+role: admin
+attributes:
+  school_id: home-office
+  data_classifications_allowed: [public, internal, student-first-name, aggregated-stats, audit-metadata]
+  data_classifications_forbidden: [medical, counselor-notes]   # even admins don't see these
+  special_capabilities: [view-audit-log, view-manifests, view-dlp-findings]

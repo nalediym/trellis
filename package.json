@@ -1,0 +1,40 @@
+{
+  "name": "trellis",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Trellis — IaC-configured AI platform for mission-driven education orgs. Catalog, policy engine, DLP scanner, audit trail.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "npm run validate:manifests && next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "validate:manifests": "tsx scripts/validate-manifests.ts",
+    "test:engines": "tsx scripts/test-engines.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/google": "^2.0.0",
+    "ai": "^6.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "js-yaml": "^4.1.1",
+    "lucide-react": "^0.469.0",
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "^16.0.0",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.0"
+  }
+}

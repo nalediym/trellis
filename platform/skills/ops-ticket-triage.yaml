@@ -1,0 +1,35 @@
+id: ops-ticket-triage
+name: "Triage an incoming ops ticket"
+owner: naledi
+reviewers: [ops-lead]
+version: "0.1"
+kind: classifier
+description: >
+  Assigns a category and priority to an inbound support ticket.
+  Flags anything touching PII or data-privacy for human review.
+
+tags: [ops, home-office, triage]
+
+inputs:
+  - id: ticket_subject
+    label: Ticket subject
+    type: string
+    example: "I can't log in to the SIS"
+  - id: ticket_body
+    label: Ticket body
+    type: string
+    example: "Reset my password please, blocking me from entering attendance."
+  - id: submitter_role
+    label: Submitter role
+    type: enum
+    options: [teacher, principal, parent, admin, dean, ops]
+    example: teacher
+
+outputs:
+  - id: classification
+    kind: json   # {category, priority, rationale, needs_human}
+
+models:
+  classifier: "google/gemini-2.5-flash"
+
+dlp_rules: [pii-core, ticket-paraphrase]

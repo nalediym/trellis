@@ -1,0 +1,41 @@
+id: policy-handbook-summary
+name: "Summarize a handbook policy section"
+owner: naledi
+reviewers: [teacher-coach-1, legal-liaison]
+version: "0.1"
+kind: one-shot
+description: >
+  Produces a plain-English summary of a handbook policy section.
+  Useful for orientation materials, school-day-kickoff announcements,
+  or PDFs sent home. Never invents policy not in the source.
+
+tags: [k-12, reference, comms]
+
+inputs:
+  - id: section_id
+    label: Handbook section
+    type: enum
+    options: [attendance, parent-communication, pii-handling]
+    example: attendance
+  - id: audience
+    label: Audience
+    type: enum
+    options: [parents, teachers, staff, students]
+    example: parents
+  - id: length
+    label: Length
+    type: enum
+    options: [one-sentence, short, medium]
+    example: short
+
+outputs:
+  - id: summary
+    kind: markdown
+
+connectors:
+  - handbook
+
+models:
+  draft: "google/gemini-2.5-flash"
+
+dlp_rules: [pii-core]

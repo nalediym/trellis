@@ -1,0 +1,17 @@
+id: handbook
+name: "Teacher Handbook (static)"
+owner: naledi
+reviewers: [teacher-coach-1]
+version: "0.1"
+kind: static-markdown
+description: >
+  Synthetic Uncommon Schools teacher handbook, loaded from ../../handbook/*.md
+  at server start. In production this would be a pgvector index rebuilt
+  nightly from the Uncommon wiki via dbt.
+
+source: "../../handbook/*.md"
+chunk_by: heading
+retrieval: keyword-score    # in production: embedding search
+max_chunks_per_query: 5
+
+auth: none   # static file; no secrets needed

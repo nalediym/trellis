@@ -1,0 +1,60 @@
+id: parent-comms-attendance
+name: "Draft attendance check-in to guardian"
+owner: naledi
+reviewers: [teacher-coach-1, teacher-coach-2]
+version: "0.2"
+kind: streaming-agent
+description: >
+  Drafts a warm, policy-compliant check-in to a guardian when a student
+  accrues 2+ unexplained absences in a 14-day window. Retrieves policy
+  from the teacher handbook; redacts PII before reaching the model.
+
+tags: [k-12, parent-comms, attendance, flagship]
+
+inputs:
+  - id: student_first_name
+    label: Student · first name
+    type: string
+    placeholder: Amelie
+    example: Amelie
+  - id: guardian_preferred_name
+    label: Guardian · preferred name
+    type: string
+    placeholder: Ms. Moreno
+    example: Ms. Moreno
+  - id: guardian_preferred_language
+    label: Guardian · preferred language
+    type: enum
+    options: [en, es, pt, ht, zh]
+    example: en
+  - id: attendance_absences_14d
+    label: Attendance · unexplained absences (last 14 days)
+    type: number
+    example: 2
+  - id: homeroom
+    label: Homeroom
+    type: string
+    placeholder: "7B"
+    example: "7B"
+
+outputs:
+  - id: draft
+    kind: markdown
+  - id: retrieval_sources
+    kind: citations
+  - id: redaction_findings
+    kind: json
+
+connectors:
+  - handbook           # reads handbook/*.md at build time
+  # - sis              # would read attendance in production; mocked in demo
+  # - gmail            # would deliver in production; teacher copies in demo
+
+models:
+  draft: "google/gemini-2.5-pro"
+  classifier: "google/gemini-2.5-flash"
+
+dlp_rules: [pii-core, fern-minors]
+disallowed_phrasings: ["your child", "non-compliant", "legal"]
+
+prompt_blueprint: ../../blueprints/parent-comms-attendance.md

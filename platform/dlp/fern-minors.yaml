@@ -1,0 +1,32 @@
+id: fern-minors
+name: "FERPA-adjacent minor protections (classifier layer)"
+owner: naledi
+reviewers: [security-officer, legal-liaison, teacher-coach-1]
+version: "0.1"
+description: >
+  The ambiguous cases that regex can't catch: names of third-party
+  minors mentioned in free text, nicknames that hint at a student,
+  and references to IEP/504 status. Runs a small LLM classifier
+  (Haiku) over scanned spans and returns confidence scores.
+
+  The current deployment ships with the classifier STUBBED — the
+  regex layer is real, the classifier layer returns empty findings.
+  Replacing the stub with a real Haiku call is a one-line change in
+  lib/dlp.ts and is listed in the production roadmap.
+
+classifier_model: "google/gemini-2.5-flash"
+targets:
+  - id: third_party_minor_name
+    description: A name that could identify a student other than the one the workflow is about.
+    on_finding: redact
+  - id: iep_504_mention
+    description: Any reference to a student's IEP, 504 plan, or specific accommodations.
+    on_finding: warn
+  - id: medical_context
+    description: Health condition, medication, or medical event attributed to a specific student.
+    on_finding: warn
+  - id: disciplinary_history_beyond_event
+    description: Mention of disciplinary actions older than the triggering event.
+    on_finding: redact
+
+confidence_threshold: 0.75
