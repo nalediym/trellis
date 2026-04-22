@@ -70,68 +70,48 @@ export default async function SkillDetailPage({ params }: Props) {
             </Badge>
           ))}
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-[12px] muted">
-          <span>owner: {skill.owner}</span>
-          <span aria-hidden>·</span>
-          <span>reviewers: {(skill.reviewers ?? []).join(", ") || "—"}</span>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] muted font-mono">
+          <span title={`reviewers: ${(skill.reviewers ?? []).join(", ") || "—"}`}>
+            @{skill.owner}
+          </span>
           {skill.models?.draft && (
-            <>
-              <span aria-hidden>·</span>
-              <span>
-                draft:{" "}
-                <code className="font-mono text-[color:var(--accent)]">
-                  {skill.models.draft}
-                </code>
+            <span>
+              draft ·{" "}
+              <span className="text-[color:var(--accent)]">
+                {skill.models.draft}
               </span>
-            </>
+            </span>
           )}
           {skill.models?.classifier && (
-            <>
-              <span aria-hidden>·</span>
-              <span>
-                classifier:{" "}
-                <code className="font-mono text-[color:var(--accent)]">
-                  {skill.models.classifier}
-                </code>
+            <span>
+              classifier ·{" "}
+              <span className="text-[color:var(--accent)]">
+                {skill.models.classifier}
               </span>
-            </>
+            </span>
           )}
         </div>
       </header>
 
-      <section className="surface p-5 space-y-4">
-        <h2 className="text-xs uppercase tracking-[0.14em] muted">
-          Enforced rules
-        </h2>
-        <div className="grid md:grid-cols-3 gap-3 text-[13px]">
-          <RuleSummary
-            label="Policy"
-            value={decision.allowed ? "Allowed" : "Denied"}
-            tone={decision.allowed ? "success" : "warn"}
-            detail={decision.reason}
-          />
-          <RuleSummary
-            label="DLP rules"
-            value={`${dlpRules.length} rule${dlpRules.length === 1 ? "" : "s"}`}
-            tone="neutral"
-            detail={dlpRules.map((r) => r.id).join(", ") || "—"}
-          />
-          <RuleSummary
-            label="Connectors"
-            value={`${(skill.connectors ?? []).length}`}
-            tone="neutral"
-            detail={(skill.connectors ?? []).join(", ") || "—"}
-          />
-        </div>
-        {dlpRules.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {dlpRules.map((r) => (
-              <Badge key={r.id} tone="warn">
-                {r.id} · {r.kind}
-              </Badge>
-            ))}
-          </div>
-        )}
+      <section className="grid md:grid-cols-3 gap-3">
+        <RuleSummary
+          label="Policy"
+          value={decision.allowed ? "Allowed" : "Denied"}
+          tone={decision.allowed ? "success" : "warn"}
+          detail={decision.reason}
+        />
+        <RuleSummary
+          label="DLP"
+          value={`${dlpRules.length} rule${dlpRules.length === 1 ? "" : "s"}`}
+          tone="neutral"
+          detail={dlpRules.map((r) => r.id).join(", ") || "—"}
+        />
+        <RuleSummary
+          label="Connectors"
+          value={`${(skill.connectors ?? []).length}`}
+          tone="neutral"
+          detail={(skill.connectors ?? []).join(", ") || "—"}
+        />
       </section>
 
       <SkillRunner
@@ -156,14 +136,14 @@ function RuleSummary({
   detail: string;
 }) {
   return (
-    <div className="rounded-md border border-[color:var(--border)] p-3 space-y-1">
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] uppercase tracking-[0.14em] muted">
+    <div className="surface p-3 space-y-1">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[10.5px] uppercase tracking-[0.14em] muted">
           {label}
         </span>
         <Badge tone={tone}>{value}</Badge>
       </div>
-      <p className="text-[12px] muted truncate" title={detail}>
+      <p className="text-[11.5px] font-mono muted truncate" title={detail}>
         {detail}
       </p>
     </div>

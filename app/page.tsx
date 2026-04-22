@@ -38,20 +38,18 @@ export default async function HomePage() {
           DLP-aware, audited by design.
         </h1>
         <p className="text-[15px] md:text-base muted leading-relaxed">
-          Trellis is a sketch of the JD&apos;s hardest bullet: &ldquo;reusable AI stack
-          templates and low-code tools that empower non-technical team members.&rdquo;
-          Every skill, policy, PII rule, and integration is a YAML manifest in{" "}
+          Every skill, policy, PII rule, and integration is a YAML file in{" "}
           <code className="font-mono text-[0.9em] text-[color:var(--accent)]">
             platform/
           </code>
-          . The UI is the rendered state of the repo. A change is a PR.
-          A rollback is <code className="font-mono">git revert</code>.
+          . A change is a PR. A rollback is{" "}
+          <code className="font-mono">git revert</code>.
         </p>
 
         <div className="flex flex-wrap items-center gap-3">
           <Link href="/skills">
             <Button size="lg">
-              Open the skill catalog
+              Open the catalog
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Button>
           </Link>
@@ -62,15 +60,11 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="text-[12.5px] muted flex flex-wrap items-center gap-2 pt-2">
-          Acting as <Badge tone="accent">{persona.name}</Badge>
-          <span aria-hidden>·</span>
-          <span>
-            the catalog and the audit visibility re-render when you switch.
-          </span>
-          <span aria-hidden>·</span>
+        <div className="text-[12px] muted flex flex-wrap items-center gap-2 pt-1">
+          <span>Acting as</span>
+          <Badge tone="accent">{persona.name}</Badge>
           <Badge tone={liveModel ? "success" : "warn"}>
-            {liveModel ? "live model connected" : "stub mode (no API key)"}
+            {liveModel ? "live model" : "stub mode"}
           </Badge>
         </div>
       </section>
@@ -91,40 +85,21 @@ export default async function HomePage() {
         />
       </section>
 
-      <section className="grid md:grid-cols-3 gap-6">
+      <section className="grid md:grid-cols-3 gap-4">
         <Pillar
-          icon={<FileCode2 className="h-5 w-5" aria-hidden />}
+          icon={<FileCode2 className="h-4.5 w-4.5" aria-hidden />}
           title="Everything is a manifest"
-          body={
-            <>
-              Skills, personas, policies, DLP rules, connectors — all files in
-              <code className="font-mono mx-1">platform/</code>. Validated by
-              zod at startup; the server refuses to boot if a manifest is
-              invalid.
-            </>
-          }
+          body="Skills, personas, policies, DLP rules, connectors — all YAML. Zod-validated at startup."
         />
         <Pillar
-          icon={<ShieldCheck className="h-5 w-5" aria-hidden />}
-          title="DLP on every invocation"
-          body={
-            <>
-              Regex + similarity + classifier layers run on both input and
-              output. Yellow banners for warnings, hard-block on restricted
-              PII. The skill manifest names which rules are required.
-            </>
-          }
+          icon={<ShieldCheck className="h-4.5 w-4.5" aria-hidden />}
+          title="DLP on every call"
+          body="Regex + similarity + classifier. Warn redacts; block fails. Banners show which rules fired."
         />
         <Pillar
-          icon={<Layers className="h-5 w-5" aria-hidden />}
+          icon={<Layers className="h-4.5 w-4.5" aria-hidden />}
           title="Audited by design"
-          body={
-            <>
-              Every invocation is logged with persona, DLP findings, and
-              outcome. Admins open the <code className="font-mono">/audit</code>{" "}
-              tab and see the last 200 calls; non-admins get 403.
-            </>
-          }
+          body="Every invocation logged with persona, findings, outcome. /audit is admin-only."
         />
       </section>
 
@@ -160,32 +135,26 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <footer className="border-t border-[color:var(--border)] pt-6 mt-8 text-sm muted space-y-2">
-        <p>
-          <strong className="text-[color:var(--text)]">Naledi Kekana</strong>
-          {" — "}
-          <a
-            href="https://www.linkedin.com/in/naledikekana/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LinkedIn
-          </a>
-          {" · "}
-          <a
-            href="https://github.com/nalediym"
-            target="_blank"
-            rel="noreferrer"
-          >
-            GitHub
-          </a>
-        </p>
-        <p>
-          Portfolio demo for the{" "}
-          <em>Senior Software Engineer, AI Solutions</em> role at Uncommon
-          Schools. All handbook pages, inputs, and connector responses are
-          synthesized — no real student data is used.
-        </p>
+      <footer className="border-t border-[color:var(--border)] pt-6 mt-8 text-[12.5px] muted flex flex-wrap items-center gap-x-3 gap-y-1">
+        <strong className="text-[color:var(--text)] font-semibold">
+          Naledi Kekana
+        </strong>
+        <a
+          href="https://www.linkedin.com/in/naledikekana/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LinkedIn
+        </a>
+        <a
+          href="https://github.com/nalediym"
+          target="_blank"
+          rel="noreferrer"
+        >
+          GitHub
+        </a>
+        <span aria-hidden>·</span>
+        <span>Portfolio sketch. All data is synthesized.</span>
       </footer>
     </main>
   );
@@ -219,14 +188,14 @@ function Pillar({
   body: React.ReactNode;
 }) {
   return (
-    <article className="surface p-5">
+    <article className="surface p-4">
       <div className="flex items-center gap-2 text-[color:var(--accent)]">
         {icon}
-        <h3 className="text-sm font-semibold text-[color:var(--text)]">
+        <h3 className="text-[13px] font-semibold text-[color:var(--text)]">
           {title}
         </h3>
       </div>
-      <p className="mt-2 text-[13.5px] leading-relaxed">{body}</p>
+      <p className="mt-1.5 text-[12.5px] muted leading-relaxed">{body}</p>
     </article>
   );
 }

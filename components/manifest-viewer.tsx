@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TreeEntry {
@@ -143,13 +143,28 @@ export function ManifestViewer({ tree, initialFile }: Props) {
 }
 
 function Interpretation({ section, id }: { section: string; id: string }) {
+  const [open, setOpen] = useState(false);
   const note = interpretationFor(section, id);
   return (
-    <div className="border-t border-[color:var(--border)] pt-4">
-      <p className="text-[11px] uppercase tracking-[0.14em] muted mb-1">
-        How this is interpreted
-      </p>
-      <p className="text-[13px] leading-relaxed">{note}</p>
+    <div className="border-t border-[color:var(--border)] pt-3">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.14em] muted hover:text-[color:var(--accent)]"
+      >
+        <ChevronDown
+          className={cn(
+            "h-3 w-3 transition-transform",
+            open && "rotate-180",
+          )}
+          aria-hidden
+        />
+        How this renders
+      </button>
+      {open && (
+        <p className="mt-2 text-[12.5px] leading-relaxed">{note}</p>
+      )}
     </div>
   );
 }

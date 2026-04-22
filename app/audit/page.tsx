@@ -16,19 +16,10 @@ export default async function AuditPage() {
           <p className="text-xs uppercase tracking-[0.14em] muted">
             403 · Forbidden
           </p>
-          <h1 className="text-xl font-semibold">
-            The audit log is admin-only.
-          </h1>
-          <p className="muted text-[13.5px]">
-            You&apos;re currently acting as{" "}
-            <Badge tone="accent">{persona.name}</Badge>. Switch to the{" "}
-            <Badge tone="neutral">Data & IT Admin</Badge> persona in the header
-            to see the log of every skill invocation on this deployment.
-          </p>
-          <p className="muted text-[12.5px]">
-            The guard is enforced in the page server component and again at the{" "}
-            <code className="font-mono">/api/audit</code> endpoint; a direct
-            fetch returns 403 for any non-admin cookie.
+          <h1 className="text-xl font-semibold">Audit is admin-only.</h1>
+          <p className="muted text-[13px]">
+            Acting as <Badge tone="accent">{persona.name}</Badge>. Switch to{" "}
+            <Badge tone="neutral">Data &amp; IT Admin</Badge> in the header.
           </p>
         </div>
       </main>
@@ -39,19 +30,19 @@ export default async function AuditPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-10 md:py-12 space-y-8">
-      <header className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.14em] muted">Audit</p>
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-          Last {entries.length} invocations
-        </h1>
-        <p className="max-w-3xl muted text-[14px] leading-relaxed">
-          In-memory ring buffer backed by a JSONL file on disk
-          (<code className="font-mono">.trellis-audit.jsonl</code>). Every skill
-          invocation is recorded with persona, DLP findings, outcome, and
-          duration. In production this would be a Postgres table + dashboards.
-          Here it&apos;s the smallest thing that lets a visitor see what they
-          just did.
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-xs uppercase tracking-[0.14em] muted">Audit</p>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+            Last {entries.length} invocations
+          </h1>
+        </div>
+        <code
+          className="font-mono text-[11.5px] muted"
+          title="Ring buffer + JSONL on disk. Postgres + dashboards in prod."
+        >
+          .trellis-audit.jsonl
+        </code>
       </header>
 
       {entries.length === 0 ? (
