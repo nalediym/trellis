@@ -18,7 +18,8 @@
 
 set -euo pipefail
 
-PROJECT=trellis-nalediym
+# Read the default project from .firebaserc (single source of truth).
+PROJECT="$(python3 -c "import json;print(json.load(open('.firebaserc'))['projects']['default'])" 2>/dev/null || echo trellis-4e361)"
 BACKEND=trellis
 REGION=us-central1
 
