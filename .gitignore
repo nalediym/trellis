@@ -22,6 +22,10 @@ node_modules/
 # trellis runtime state
 .trellis-audit.jsonl
 
+# knowledge-base scratch (local-only; not wired into the app yet)
+kb/
+kb.config.json
+
 # IDE
 .vscode/
 .idea/
